@@ -1,0 +1,9 @@
+build/
+build-arm/
+*.o
+*.elf
+*.bin
+*.map
+.vscode/
+.idea/
+.claude-flow/

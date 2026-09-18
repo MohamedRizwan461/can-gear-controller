@@ -1,0 +1,58 @@
+name: CI
+
+on:
+  push:
+    branches: [ main, master ]
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  unit-tests:
+    name: Unit tests (host)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Configure
+        run: cmake -S . -B build -DCMAKE_BUILD_TYPE=Debug
+
+      - name: Build
+        run: cmake --build build --parallel
+
+      - name: Run tests
+        run: ctest --test-dir build --output-on-failure
+
+  static-analysis:
+    name: Static analysis
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install cppcheck
+        run: sudo apt-get update && sudo apt-get install -y cppcheck
+
+      - name: Run cppcheck
+        run: |
+          cppcheck --enable=warning,performance,portability \
+                   --error-exitcode=1 \
+                   --inline-suppr \
+                   --suppress=missingIncludeSystem \
+                   -I src \
+                   src/gear_state.c src/shift_scheduler.c src/can_protocol.c
+
+  firmware-build:
+    name: Firmware build (arm-none-eabi)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install ARM toolchain
+        uses: carlosperate/arm-none-eabi-gcc-action@v1
+        with:
+          release: '12.3.Rel1'
+
+      - name: Compile logic for ARM Cortex-M4
+        run: |
+          arm-none-eabi-gcc -c -mcpu=cortex-m4 -mthumb -Os -Wall -Wextra -Werror \
+            -Isrc src/gear_state.c src/shift_scheduler.c src/can_protocol.c
+          arm-none-eabi-size *.o
