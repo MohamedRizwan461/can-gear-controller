@@ -20,7 +20,7 @@ void test_SWR011_hysteresis_prevents_hunting(void)
     uint16_t down_from_d2 = shift_downshift_threshold_x10(GEAR_D2);
 
     TEST_ASSERT_TRUE(up_from_d1 > down_from_d2);
-    TEST_ASSERT_TRUE((up_from_d1 - down_from_d2) >= SHIFT_HYSTERESIS_X10);
+    TEST_ASSERT_TRUE((uint16_t)(up_from_d1 - down_from_d2) >= SHIFT_HYSTERESIS_X10);
 
     /* Sitting inside the band, neither gear wants to change. */
     uint16_t inside = (uint16_t)(down_from_d2 + 5u);
