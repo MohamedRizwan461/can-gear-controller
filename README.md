@@ -1,5 +1,7 @@
 # CAN-Based Transmission Gear-State Controller
 
+[![CI](https://github.com/MohamedRizwan461/can-gear-controller/actions/workflows/ci.yml/badge.svg)](https://github.com/MohamedRizwan461/can-gear-controller/actions/workflows/ci.yml)
+
 Embedded gear-state controller for a simulated multi-speed transmission, running
 FreeRTOS on an STM32 and exchanging J1939-style status and command frames over CAN
 between two nodes.
